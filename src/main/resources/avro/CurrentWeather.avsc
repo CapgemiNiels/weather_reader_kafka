@@ -1,0 +1,14 @@
+{
+  "type": "record",
+  "name": "CurrentWeather",
+  "namespace": "nh.weather_reader_kafka.model.avro",
+  "fields": [
+    {"name": "time", "type": "string"},
+    {"name": "interval", "type": "int"},
+    {"name": "temperature", "type": "double"},
+    {"name": "windspeed", "type": "double"},
+    {"name": "winddirection", "type": "int"},
+    {"name": "is_day", "type": "int"},
+    {"name": "weathercode", "type": "double"}
+  ]
+}
