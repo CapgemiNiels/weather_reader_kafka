@@ -5,6 +5,10 @@ spring:
       properties:
         schema.registry.url: http://127.0.0.1:8081
 
+server:
+  port: 8090
+
 kafka:
   topic:
     name: weather_input
+    processed-name: processed-weather-data

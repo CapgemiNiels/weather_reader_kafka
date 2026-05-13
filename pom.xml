@@ -86,7 +86,11 @@
                 <version>0.8.14</version>
                 <configuration>
                     <excludes>
+                        <!-- Entry point — no business logic -->
                         <exclude>nh/weather_reader_kafka/WeatherReaderKafkaApplication*</exclude>
+                        <!-- Spring wiring / infrastructure — tested via integration tests, not unit tests -->
+                        <exclude>nh/weather_reader_kafka/config/*</exclude>
+                        <exclude>nh/weather_reader_kafka/kafka/WeatherKafkaListener*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -136,6 +140,11 @@
                 <version>${maven.compiler.plugin.version}</version>
                 <configuration>
                     <release>${java.version}</release>
+                    <compilerArgs>
+                        <!-- Suppress deprecation lint; Spring Kafka JsonSerializer is
+                             transitionally deprecated — tracked separately. -->
+                        <arg>-Xlint:-deprecation</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
 

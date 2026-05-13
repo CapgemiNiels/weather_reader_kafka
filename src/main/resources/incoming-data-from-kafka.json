@@ -1,0 +1,11 @@
+{
+  "time": "2026-05-13T14:15:00Z",
+  "interval": 900,
+  "temperature": 11.8,
+  "windspeed": 11.5,
+  "winddirection": 248,
+  "is_day": 1,
+  "weathercode": 61
+}
+
+from my kafka topic i'm getting the info in src/main/resources/incoming-data-from-kafka.json . What i want to do here is from my weatherkafkalistener i'm reading this info into my avro schema generated fields. I want to just have the fields time, temperature, windspeed, wind direction and is_day and use those fields to proces further. for now i would want to get these fields and produce these back to the kafka cluster to a new topic "processed-weather-data". 
