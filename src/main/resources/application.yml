@@ -1,0 +1,10 @@
+spring:
+  kafka:
+    bootstrap-servers: 127.0.0.1:9092
+    consumer:
+      properties:
+        schema.registry.url: http://127.0.0.1:8081
+
+kafka:
+  topic:
+    name: weather_input

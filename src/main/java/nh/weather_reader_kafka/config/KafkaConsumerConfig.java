@@ -1,12 +1,8 @@
 package nh.weather_reader_kafka.config;
 
-
-import org.apache.kafka.common.serialization.StringDeserializer;
-import nh.weather_reader_kafka.model.CurrentWeather;
-
-
-import io.confluent.kafka.serializers.KafkaAvroSerializer;
+import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,50 +10,56 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@EnableKafka
 @Configuration
+@EnableKafka
 public class KafkaConsumerConfig {
 
-    @Value("${spring.kafka.bootstrap.servers}")
+    @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    @Value("${spring.kafka.consumer.group-id}")
-    private String consumerGroupId;
-
-    @Value("${spring.kafka.consumer.auto-offset-reset}")
-    private String autoOffsetReset;
-
-    private final CustomKafkaErrorHandler errorHandler;
-
-    public KafkaConsumerConfig(CustomKafkaErrorHandler errorHandler) {
-        this.errorHandler = errorHandler;
-    }
+    @Value("${spring.kafka.consumer.properties.schema.registry.url}")
+    private String schemaRegistryUrl;
 
     @Bean
-    public ConsumerFactory<String, CurrentWeather> consumerFactory() {
+    public ConsumerFactory<String, Object> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
+
+        // Bootstrap servers
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroupId);
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
-        props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class.getName());
-        props.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, StringDeserializer.class.getName());
-        props.put(JsonDeserializer.TRUSTED_PACKAGES, "nh.weather_reader_kafka.model,nh.weather_app_kafka.model");
+
+        // Consumer group - change this to your consumer group name
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "weather-reader-group");
+
+        // Key deserializer (String)
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+
+        // Value deserializer - uses Avro from Schema Registry
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class);
+
+        // Schema Registry URL - this is the key for dynamic schema fetching
+        props.put("schema.registry.url", schemaRegistryUrl);
+
+        // Use GenericRecord (no generated classes needed)
+        // Set to false if you want to use specific Avro classes
+        props.put("specific.avro.reader", false);
+
+        // Auto-commit offsets
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
+
         return new DefaultKafkaConsumerFactory<>(props);
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, CurrentWeather> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, CurrentWeather> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, Object> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
-        factory.setCommonErrorHandler(errorHandler);
         return factory;
     }
 }
+
