@@ -59,6 +59,7 @@ Key properties in `application.yml`:
 |---|---|---|
 | `spring.kafka.bootstrap-servers` | `127.0.0.1:9092` | Kafka broker |
 | `spring.kafka.consumer.properties.schema.registry.url` | `http://127.0.0.1:8081` | Confluent Schema Registry |
+| `spring.kafka.consumer.group-id` | `weather-reader-group` | Consumer group shared by the listener and consumer factory |
 | `kafka.topic.name` | `weather_input` | Source topic |
 | `kafka.topic.processed-name` | `processed-weather-data` | Output topic |
 | `server.port` | `8090` | HTTP port |
@@ -67,12 +68,17 @@ Key properties in `application.yml`:
 
 ## Running
 
-```bash
-./mvnw spring-boot:run
+```powershell
+.\mvnw.cmd spring-boot:run
 ```
 
 ## Tests
 
-```bash
-./mvnw verify   # runs all unit tests + JaCoCo coverage gates (≥80% line / ≥70% branch)
+```powershell
+.\mvnw.cmd verify   # runs all unit tests + JaCoCo coverage gates (≥80% line / ≥70% branch)
 ```
+
+## Sample input
+
+`src/main/resources/incoming-data-from-kafka.json` contains a valid example payload from the upstream topic and can be used as a quick reference when testing mappings.
+

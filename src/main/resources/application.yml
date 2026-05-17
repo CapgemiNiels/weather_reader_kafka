@@ -2,6 +2,8 @@ spring:
   kafka:
     bootstrap-servers: 127.0.0.1:9092
     consumer:
+      group-id: weather-reader-group
+      auto-offset-reset: earliest
       properties:
         schema.registry.url: http://127.0.0.1:8081
 
@@ -12,3 +14,17 @@ kafka:
   topic:
     name: weather_input
     processed-name: processed-weather-data
+    # Dead-letter topics are auto-named by Spring Kafka as <source-topic>.DLT
+    # e.g. weather_input.DLT — ensure these topics exist in your Kafka cluster
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,kafkaConsumerMetrics
+  endpoint:
+    health:
+      show-details: always
+  health:
+    defaults:
+      enabled: true

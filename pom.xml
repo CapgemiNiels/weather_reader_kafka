@@ -13,19 +13,6 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>weather_reader_kafka</name>
     <description>weather_reader_kafka</description>
-    <url/>
-    <licenses>
-        <license/>
-    </licenses>
-    <developers>
-        <developer/>
-    </developers>
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
-    </scm>
     <properties>
         <java.version>21</java.version>
         <confluent.version>8.2.0</confluent.version>
@@ -44,6 +31,10 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
         </dependency>
@@ -60,11 +51,6 @@
             <groupId>io.confluent</groupId>
             <artifactId>kafka-avro-serializer</artifactId>
             <version>${confluent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -88,9 +74,8 @@
                     <excludes>
                         <!-- Entry point — no business logic -->
                         <exclude>nh/weather_reader_kafka/WeatherReaderKafkaApplication*</exclude>
-                        <!-- Spring wiring / infrastructure — tested via integration tests, not unit tests -->
+                        <!-- Spring wiring / infrastructure -->
                         <exclude>nh/weather_reader_kafka/config/*</exclude>
-                        <exclude>nh/weather_reader_kafka/kafka/WeatherKafkaListener*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -140,11 +125,6 @@
                 <version>${maven.compiler.plugin.version}</version>
                 <configuration>
                     <release>${java.version}</release>
-                    <compilerArgs>
-                        <!-- Suppress deprecation lint; Spring Kafka JsonSerializer is
-                             transitionally deprecated — tracked separately. -->
-                        <arg>-Xlint:-deprecation</arg>
-                    </compilerArgs>
                 </configuration>
             </plugin>
 
@@ -158,14 +138,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
             </plugin>
         </plugins>
     </build>

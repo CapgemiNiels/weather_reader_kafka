@@ -45,6 +45,11 @@ public class WeatherConsumerService {
      * @param weatherRecord raw Avro {@link GenericRecord} from {@code weather_input}
      */
     public void processWeather(GenericRecord weatherRecord) {
+        if (weatherRecord == null) {
+            logger.warn("Received null weather record; skipping processing");
+            return;
+        }
+
         logger.info("Processing weather record from schema: {}",
                 weatherRecord.getSchema().getName());
 

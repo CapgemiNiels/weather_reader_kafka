@@ -6,6 +6,7 @@ import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.util.Utf8;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -15,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 /**
  * Unit tests for {@link WeatherConsumerService}.
@@ -222,6 +224,30 @@ class WeatherConsumerServiceTest {
         assertThat(result.windSpeed())     .isEqualTo(11.5);
         assertThat(result.windDirection()) .isEqualTo(248);
         assertThat(result.isDay())         .isEqualTo(1);
+    }
+
+    @Test
+    void processWeather_avroUtf8Time_convertsToJavaString() {
+        GenericRecord input = buildRecord(
+                null, 11.8, 11.5, 248, 1, 900, 61);
+        input.put("time", new Utf8("2026-05-13T14:15:00Z"));
+
+        weatherConsumerService.processWeather(input);
+
+        ArgumentCaptor<ProcessedWeatherData> captor =
+                ArgumentCaptor.forClass(ProcessedWeatherData.class);
+        verify(weatherKafkaProducer).send(captor.capture());
+
+        assertThat(captor.getValue().time())
+                .isEqualTo("2026-05-13T14:15:00Z")
+                .isInstanceOf(String.class);
+    }
+
+    @Test
+    void processWeather_nullRecord_doesNotCallProducer() {
+        weatherConsumerService.processWeather(null);
+
+        verifyNoInteractions(weatherKafkaProducer);
     }
 }
 
