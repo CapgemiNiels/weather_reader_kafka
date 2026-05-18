@@ -24,6 +24,10 @@ public class ProcessedWeatherDataSerializer implements Serializer<ProcessedWeath
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    /** Creates a serializer instance with a shared Jackson mapper. */
+    public ProcessedWeatherDataSerializer() {
+    }
+
     /**
      * Serializes {@code data} to its JSON byte representation.
      *

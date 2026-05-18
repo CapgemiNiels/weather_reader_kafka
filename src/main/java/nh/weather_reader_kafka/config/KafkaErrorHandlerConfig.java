@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * Configures production-grade Kafka consumer error handling.
  *
- * <h3>Strategy</h3>
+ * <h2>Strategy</h2>
  * <ol>
  *   <li>On listener failure, Spring Kafka retries the record up to
  *       {@value #MAX_RETRY_ATTEMPTS} times with a {@value #RETRY_INTERVAL_MS} ms
@@ -43,6 +43,10 @@ import java.util.Map;
 @Configuration
 public class KafkaErrorHandlerConfig {
 
+    /** Creates an error-handler configuration bean container. */
+    public KafkaErrorHandlerConfig() {
+    }
+
     /** Number of retry attempts after the initial failure (total attempts = retries + 1). */
     static final long MAX_RETRY_ATTEMPTS = 3L;
 
@@ -60,6 +64,8 @@ public class KafkaErrorHandlerConfig {
      * <p>This bean is intentionally <em>not</em> {@code @Primary} — the main
      * {@link KafkaTemplate} (typed to {@link nh.weather_reader_kafka.model.ProcessedWeatherData})
      * in {@link KafkaProducerConfig} carries that role.
+     *
+     * @return byte-array based {@link KafkaTemplate} used for DLT publishing
      */
     @Bean
     public KafkaTemplate<Object, Object> dltKafkaTemplate() {
@@ -76,6 +82,9 @@ public class KafkaErrorHandlerConfig {
      *
      * <p>Retries are not attempted for {@link SerializationException} — those
      * failures are permanent and should go straight to the DLT.
+     *
+     * @param dltKafkaTemplate template dedicated to dead-letter publishing
+     * @return configured {@link DefaultErrorHandler} with retry and DLT recovery
      */
     @Bean
     public DefaultErrorHandler defaultErrorHandler(KafkaTemplate<Object, Object> dltKafkaTemplate) {

@@ -15,6 +15,12 @@ package nh.weather_reader_kafka.model;
  *
  * <p>All fields are nullable; a {@code null} value means the field was absent
  * or null in the source record.
+ *
+ * @param time timestamp string from the source record
+ * @param temperature ambient temperature value
+ * @param windSpeed wind speed value
+ * @param windDirection wind direction in degrees
+ * @param isDay day/night flag from the source payload
  */
 public record ProcessedWeatherData(
         String  time,

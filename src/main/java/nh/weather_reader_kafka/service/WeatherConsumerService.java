@@ -26,6 +26,11 @@ public class WeatherConsumerService {
 
     private final WeatherKafkaProducer weatherKafkaProducer;
 
+    /**
+     * Creates the service with its producer dependency.
+     *
+     * @param weatherKafkaProducer producer used to publish processed records
+     */
     public WeatherConsumerService(WeatherKafkaProducer weatherKafkaProducer) {
         this.weatherKafkaProducer = weatherKafkaProducer;
     }

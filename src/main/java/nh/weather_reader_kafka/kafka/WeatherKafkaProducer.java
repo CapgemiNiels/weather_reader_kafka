@@ -32,6 +32,8 @@ public class WeatherKafkaProducer {
     private final String processedTopicName;
 
     /**
+     * Creates the producer with the Kafka template and topic configuration.
+     *
      * @param kafkaTemplate   template configured to serialize values as JSON
      * @param topicProperties typed configuration carrying the target topic name
      */

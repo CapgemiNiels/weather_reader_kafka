@@ -18,6 +18,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *     name: weather_input
  *     processed-name: processed-weather-data
  * </pre>
+ *
+ * @param name source topic consumed by listeners
+ * @param processedName destination topic used for processed messages
  */
 @ConfigurationProperties(prefix = "kafka.topic")
 public record KafkaTopicProperties(
@@ -32,4 +35,3 @@ public record KafkaTopicProperties(
          */
         String processedName
 ) {}
-

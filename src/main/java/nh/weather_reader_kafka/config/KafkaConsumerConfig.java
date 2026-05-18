@@ -30,6 +30,10 @@ import java.util.Map;
 @Configuration
 public class KafkaConsumerConfig {
 
+    /** Creates a Kafka consumer configuration bean container. */
+    public KafkaConsumerConfig() {
+    }
+
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
@@ -42,6 +46,11 @@ public class KafkaConsumerConfig {
     @Value("${spring.kafka.consumer.auto-offset-reset:earliest}")
     private String autoOffsetReset;
 
+    /**
+     * Builds the base Kafka consumer factory properties.
+     *
+     * @return consumer factory configured for Avro payload deserialization
+     */
     @Bean
     public ConsumerFactory<String, Object> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
@@ -61,6 +70,12 @@ public class KafkaConsumerConfig {
         return new DefaultKafkaConsumerFactory<>(props);
     }
 
+    /**
+     * Creates the listener container factory used by {@code @KafkaListener}.
+     *
+     * @param errorHandler shared error handler for retries and DLT publishing
+     * @return listener container factory configured for record-level acks
+     */
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory(
             DefaultErrorHandler errorHandler) {

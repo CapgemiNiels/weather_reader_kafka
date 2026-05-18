@@ -26,6 +26,10 @@ import java.util.Map;
 @Configuration
 public class KafkaProducerConfig {
 
+    /** Creates a Kafka producer configuration bean container. */
+    public KafkaProducerConfig() {
+    }
+
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 

@@ -26,6 +26,11 @@ public class WeatherKafkaListener {
 
     private final WeatherConsumerService weatherConsumerService;
 
+    /**
+     * Creates the listener with its delegated processing service.
+     *
+     * @param weatherConsumerService service that processes incoming messages
+     */
     public WeatherKafkaListener(WeatherConsumerService weatherConsumerService) {
         this.weatherConsumerService = weatherConsumerService;
     }
